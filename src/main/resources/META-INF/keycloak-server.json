@@ -59,6 +59,19 @@
         }
     },
 
+    "themeSelector": {
+        "default": {
+            "enabled": false
+        },
+        "EuropeanaThemeSelector": {
+            "enabled": true,
+            "theme": {
+                "type": "login",
+                "name": "europeana"
+            }
+        }
+    },
+
     "userCache": {
         "default" : {
             "enabled": true
@@ -72,7 +85,7 @@
     "theme": {
         "staticMaxAge": "${keycloak.theme.staticMaxAge:2592000}",
         "cacheTemplates": "${keycloak.theme.cacheTemplates:true}",
-        "cacheThemes": "${keycloak.theme.cacheThemes:true}",
+        "cacheThemes": "${keycloak.theme.cacheThemes:false}",
         "folder": {
             "dir": "${keycloak.theme.dir}"
         }

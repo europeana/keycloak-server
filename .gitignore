@@ -3,9 +3,9 @@
 .idea/
 
 ### Secrets ###
-**/application.user.properties
-**/application.user.yml
-**/application-user.yml
+**/keycloak.user.properties
+**/keycloak.user.yml
+**/keycloak-user.yml
 
 ### Java spills ###
 *.class

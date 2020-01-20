@@ -90,7 +90,6 @@
         "provider": "default",
         "default": {
             "dataSource": "spring/datasource",
-            "url": "${keycloak.connectionsJpa.dbUrl:jdbc:postgresql://localhost:5433/keycloak}",
             "driver": "${keycloak.connectionsJpa.driver:org.postgresql.Driver}",
             "driverDialect": "${keycloak.connectionsJpa.driverDialect:}",
             "user": "${keycloak.connectionsJpa.user:postgres}",

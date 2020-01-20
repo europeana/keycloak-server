@@ -8,9 +8,12 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication(exclude = LiquibaseAutoConfiguration.class)
 @EnableConfigurationProperties(KeycloakServerProperties.class)
+@PropertySource(value = "classpath:application.properties")
+@PropertySource(value = "classpath:application-user.properties", ignoreResourceNotFound = true)
 public class EmbeddedKeycloakApp {
 
   public static void main(String[] args) {

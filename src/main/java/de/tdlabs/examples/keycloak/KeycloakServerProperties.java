@@ -14,8 +14,8 @@ public class KeycloakServerProperties {
   private String apikeyManagerClientId;
   private String apikeyManagerClientSecret;
 
-
   private AdminUser adminUser = new AdminUser();
+
 
   public String getContextPath() {
     return contextPath;
@@ -25,8 +25,8 @@ public class KeycloakServerProperties {
     this.contextPath = contextPath;
   }
 
-  public String getPepper() {
-    return this.pepper;
+  public String getPepper(){
+    return pepper;
   }
 
   public void setPepper(String pepper) {

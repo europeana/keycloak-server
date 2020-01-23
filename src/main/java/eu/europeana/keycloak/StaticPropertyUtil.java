@@ -2,7 +2,6 @@ package eu.europeana.keycloak;
 
 import de.tdlabs.examples.keycloak.KeycloakServerProperties;
 import eu.europeana.keycloak.apikey.EuropeanaEventListenerProviderFactory;
-import org.keycloak.events.EventType;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.boot.bind.PropertiesConfigurationFactory;
 import org.springframework.core.env.MutablePropertySources;

@@ -4,6 +4,8 @@
 
 ### Secrets ###
 **/keycloak.user.properties
+**/keycloak-user.properties
+src/main/resources/keycloak-user.properties
 **/keycloak.user.yml
 **/keycloak-user.yml
 

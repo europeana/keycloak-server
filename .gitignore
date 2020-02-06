@@ -14,6 +14,7 @@ buildNumber.properties
 .mvn/
 data/
 .idea/
+/**/keycloak-user.properties
 
 
 # Created by https://www.gitignore.io/api/intellij+iml

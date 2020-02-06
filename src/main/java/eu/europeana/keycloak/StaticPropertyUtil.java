@@ -15,8 +15,11 @@ import java.net.URL;
 import java.util.Properties;
 
 /**
- * Utility for loading property files before Spring is initialized
+ * Utility for loading property files before Spring is initialized and making this available in the
+ * KeycloakServerProperties
+ *
  * Created by luthien on 23/01/2020.
+ * Modified by Patrick Ehlert on Feb 5 2020
  */
 public final class StaticPropertyUtil {
 
@@ -29,18 +32,6 @@ public final class StaticPropertyUtil {
 
     public static String getPepper(){
         return kcProperties.getPepper();
-    }
-
-    public static String getApikeyServiceUrl(){
-        return kcProperties.getApikeyServiceUrl();
-    }
-
-    public static String getApikeyManagerClientId(){
-        return kcProperties.getApikeyManagerClientId();
-    }
-
-    public static String getApikeyManagerClientSecret(){
-        return kcProperties.getApikeyManagerClientSecret();
     }
 
     public static String getContextPath(){
@@ -79,7 +70,7 @@ public final class StaticPropertyUtil {
 
     private static Properties loadProperties(String fileName, boolean mandatory) throws IOException {
         LOG.info("Loading {}...", fileName);
-        URL resource = StaticPropertyUtil.class.getClassLoader().getResource(fileName);
+        URL resource = Thread.currentThread().getContextClassLoader().getResource(fileName);
         if (resource == null) {
             if (mandatory) {
                 throw new FileNotFoundException(fileName + " not found!");

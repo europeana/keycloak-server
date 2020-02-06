@@ -20,6 +20,9 @@ import javax.sql.DataSource;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Configures the database (and a few other parameters) used by keycloak
+ */
 @Configuration
 class EmbeddedKeycloakConfig {
 

@@ -16,6 +16,7 @@ import java.lang.reflect.Proxy;
 import java.util.Arrays;
 
 /**
+ * Wrapper around keycloak application
  * Created by tom on 12.06.16.
  */
 public class EmbeddedKeycloakApplication extends KeycloakApplication {

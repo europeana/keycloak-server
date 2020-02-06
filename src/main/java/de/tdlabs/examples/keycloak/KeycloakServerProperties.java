@@ -3,6 +3,7 @@ package de.tdlabs.examples.keycloak;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * Keycloak related configuration
  * @author Thomas Darimont
  */
 @ConfigurationProperties(prefix = "keycloak.server")
@@ -10,10 +11,6 @@ public class KeycloakServerProperties {
 
     private String contextPath;
     private String pepper;
-    private String apikeyServiceUrl;
-    private String apikeyManagerClientId;
-    private String apikeyManagerClientSecret;
-
     private AdminUser adminUser = new AdminUser();
 
     public String getContextPath() {
@@ -30,30 +27,6 @@ public class KeycloakServerProperties {
 
     public void setPepper(String pepper) {
         this.pepper = pepper;
-    }
-
-    public String getApikeyServiceUrl() {
-        return apikeyServiceUrl;
-    }
-
-    public void setApikeyServiceUrl(String apikeyServiceUrl) {
-        this.apikeyServiceUrl = apikeyServiceUrl;
-    }
-
-    public String getApikeyManagerClientId() {
-        return apikeyManagerClientId;
-    }
-
-    public void setApikeyManagerClientId(String apikeyManagerClientId) {
-        this.apikeyManagerClientId = apikeyManagerClientId;
-    }
-
-    public String getApikeyManagerClientSecret() {
-        return apikeyManagerClientSecret;
-    }
-
-    public void setApikeyManagerClientSecret(String apikeyManagerClientSecret) {
-        this.apikeyManagerClientSecret = apikeyManagerClientSecret;
     }
 
     public AdminUser getAdminUser() {

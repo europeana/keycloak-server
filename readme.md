@@ -1,21 +1,20 @@
-Example for embedding Keycloak Server in a Spring-Boot App 
-----------------------------------------------------------
-This is just a Proof of Concept and not recommended for production use.
-Nevertheless it is a great way develop and test Keycloak extensions or 
-generally playing with Keycloak. 
+Keycloak Server in a Spring-Boot App 
+------------------------------------
 
-
-To start the sample application just build the project with: 
+To start the application you'll need to build the project with: 
 ```
 mvn package
 ```
 
-and start the spring boot app via:
+and start the Spring-Boot app:
 ```
 java -jar target/keycloak-server-*.jar
 ```
 
 The embedded Keycloak server is now reachable via http://localhost:8080/auth.
+
+By default it will use an in-memory database, but you can specify a postgres 
+database in the keycloak.properties file.
 
 
 

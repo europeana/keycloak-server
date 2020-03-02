@@ -11,7 +11,7 @@
 
     <artifactId>keycloak-server</artifactId>
     <version>0.2-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <name>Keycloak</name>
     <description>Spring-Boot wrapper for Keycloak server</description>

@@ -1,6 +1,5 @@
-package de.tdlabs.examples.keycloak;
+package eu.europeana.keycloak;
 
-import eu.europeana.keycloak.StaticPropertyUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;

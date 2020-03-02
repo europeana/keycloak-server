@@ -1,4 +1,4 @@
-package de.tdlabs.examples.keycloak;
+package eu.europeana.keycloak;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,10 +9,11 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = EmbeddedKeycloakApp.class)
 @WebAppConfiguration
-public class KeycloakAppTests {
+public class KeycloakAppTest {
 
 	@Test
 	public void contextLoads() {
+		// just do context loading
 	}
 
 }

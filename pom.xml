@@ -273,6 +273,14 @@
                         </dependency>
                     </requiresUnpack>
                 </configuration>
+                <!-- Needed to include spring-boot war start-up classes -->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- This will be active when running the verify or install goal

@@ -17,6 +17,7 @@ import org.springframework.context.annotation.PropertySource;
  */
 @SpringBootApplication(exclude = LiquibaseAutoConfiguration.class)
 @EnableConfigurationProperties(KeycloakServerProperties.class)
+@PropertySource(value = "classpath:build.properties")
 @PropertySource(value = "classpath:keycloak.properties")
 @PropertySource(value = "classpath:keycloak-user.properties", ignoreResourceNotFound = true)
 public class EmbeddedKeycloakApp {

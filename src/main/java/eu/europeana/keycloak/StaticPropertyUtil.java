@@ -1,6 +1,5 @@
 package eu.europeana.keycloak;
 
-import de.tdlabs.examples.keycloak.KeycloakServerProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.bind.PropertiesConfigurationFactory;

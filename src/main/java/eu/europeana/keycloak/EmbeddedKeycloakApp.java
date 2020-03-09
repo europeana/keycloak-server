@@ -1,6 +1,5 @@
-package de.tdlabs.examples.keycloak;
+package eu.europeana.keycloak;
 
-import eu.europeana.keycloak.StaticPropertyUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
@@ -18,6 +17,7 @@ import org.springframework.context.annotation.PropertySource;
  */
 @SpringBootApplication(exclude = LiquibaseAutoConfiguration.class)
 @EnableConfigurationProperties(KeycloakServerProperties.class)
+@PropertySource(value = "classpath:build.properties")
 @PropertySource(value = "classpath:keycloak.properties")
 @PropertySource(value = "classpath:keycloak-user.properties", ignoreResourceNotFound = true)
 public class EmbeddedKeycloakApp {

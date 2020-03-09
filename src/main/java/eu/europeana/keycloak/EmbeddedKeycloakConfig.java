@@ -1,4 +1,4 @@
-package de.tdlabs.examples.keycloak;
+package eu.europeana.keycloak;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -1,7 +1,6 @@
-package de.tdlabs.examples.keycloak;
+package eu.europeana.keycloak;
 
-import de.tdlabs.examples.keycloak.KeycloakServerProperties.AdminUser;
-import eu.europeana.keycloak.StaticPropertyUtil;
+import eu.europeana.keycloak.KeycloakServerProperties.AdminUser;
 import org.jboss.resteasy.core.Dispatcher;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.services.managers.ApplianceBootstrap;
@@ -62,7 +61,7 @@ public class EmbeddedKeycloakApplication extends KeycloakApplication {
                 return StaticPropertyUtil.getContextPath();
             }
 
-            if ("getInitParameter".equals(method.getName()) && args.length == 1 && "keycloak.embedded".equals(args[0])) {
+            if (args.length == 1 && "keycloak.embedded".equals(args[0]) && "getInitParameter".equals(method.getName())) {
                 return "true";
             }
 

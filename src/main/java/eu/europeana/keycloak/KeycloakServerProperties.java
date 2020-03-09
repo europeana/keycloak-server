@@ -1,4 +1,4 @@
-package de.tdlabs.examples.keycloak;
+package eu.europeana.keycloak;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

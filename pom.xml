@@ -3,34 +3,49 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>eu.europeana</groupId>
-    <artifactId>keycloak-server</artifactId>
-    <version>0.2-SNAPSHOT</version>
-    <packaging>jar</packaging>
-
-    <name>keycloak-server</name>
-    <description>Spring-Boot wrapper for Keycloak server</description>
-
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.15.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <groupId>eu.europeana</groupId>
+        <artifactId>europeana-parent-pom</artifactId>
+        <version>2.1</version>
     </parent>
 
+    <artifactId>keycloak-server</artifactId>
+    <version>0.2-SNAPSHOT</version>
+    <packaging>war</packaging>
+
+    <name>Keycloak</name>
+    <description>Spring-Boot wrapper for Keycloak server</description>
+
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+
+        <!-- Keycloak and related dependencies -->
         <keycloak.version>4.8.3.Final</keycloak.version>
         <resteasy.version>3.6.1.Final</resteasy.version>
         <infinispan.version>9.3.1.Final</infinispan.version>
-        <postgresql.version>42.0.0</postgresql.version>
+
+        <!-- Spring-Boot and related dependencies -->
+        <spring-boot.version>1.5.22.RELEASE</spring-boot.version>
         <spring-security-crypto.version>5.1.4.RELEASE</spring-security-crypto.version>
         <hibernate.version>5.3.6.Final</hibernate.version>
+        <postgresql.version>42.2.10</postgresql.version>
         <commons-codec.version>1.10</commons-codec.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <!-- Import dependency management from Spring Boot (because we don't use Spring-Boot as parent pom)-->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
 
@@ -109,6 +124,23 @@
             <artifactId>infinispan-core</artifactId>
             <version>${infinispan.version}</version>
         </dependency>
+        <!-- for some unknown reason we need to specifically specify the correct version for all 4 infinispan libraries
+             to prevent maven from mixing different versions -->
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-commons</artifactId>
+            <version>${infinispan.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-client-hotrod</artifactId>
+            <version>${infinispan.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-cachestore-remote</artifactId>
+            <version>${infinispan.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.keycloak</groupId>
@@ -170,12 +202,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-             <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
         </dependency>
@@ -190,12 +216,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -216,15 +236,29 @@
             <version>${commons-codec.version}</version>
         </dependency>
 
-
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
     <build>
+        <!-- set fixed name for easy deployment -->
+        <finalName>${project.artifactId}</finalName>
+
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
                 <configuration>
                     <excludeDevtools>true</excludeDevtools>
                     <requiresUnpack>
@@ -239,6 +273,33 @@
                         </dependency>
                     </requiresUnpack>
                 </configuration>
+                <!-- Needed to include spring-boot war start-up classes -->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- This will be active when running the verify or install goal
+                 To skip (e.g. during debugging) use 'mvn clean package')-->
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>5.2.4</version>
+                <configuration>
+                    <bundleAuditAnalyzerEnabled>false</bundleAuditAnalyzerEnabled>
+                    <nodeAnalyzerEnabled>false</nodeAnalyzerEnabled>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

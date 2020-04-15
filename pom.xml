@@ -32,6 +32,10 @@
         <hibernate.version>5.3.6.Final</hibernate.version>
         <postgresql.version>42.2.10</postgresql.version>
         <commons-codec.version>1.10</commons-codec.version>
+
+        <!-- Used to parse token used in autowarming request -->
+        <jsonpath.version>2.4.0</jsonpath.version>
+        <commons-lang3.version>3.10</commons-lang3.version>
     </properties>
 
     <dependencyManagement>
@@ -234,6 +238,20 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>${commons-codec.version}</version>
+        </dependency>
+
+        <!-- Used for parsing token from json -->
+
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>${jsonpath.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
         </dependency>
 
         <!-- Test dependencies -->

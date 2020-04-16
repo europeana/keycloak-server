@@ -37,14 +37,14 @@ public class EmbeddedKeycloakApp {
     @Value("${keycloak.list-clients-path}")
     private String listClientsPath;
 
-    @Value("${keycloak.server.curl-client-id}")
+    @Value("${keycloak.curl-client-id}")
     private String curlClientId;
 
-    @Value("${keycloak.server.curl-client-secret}")
+    @Value("${keycloak.curl-client-secret}")
     private String curlClientSecret;
 
-    @Value("${keycloak.server.list-client-delay}")
-    private long listClientDelay;
+    @Value("${keycloak.list-client-delay}")
+    private Long listClientDelay;
 
     private static final Logger LOG   = LogManager.getLogger(EmbeddedKeycloakApp.class);
 

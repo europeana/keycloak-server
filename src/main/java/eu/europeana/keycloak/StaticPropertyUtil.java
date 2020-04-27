@@ -56,7 +56,7 @@ public final class StaticPropertyUtil {
 
             PropertiesConfigurationFactory<KeycloakServerProperties> configurationFactory = new PropertiesConfigurationFactory<>(kcProperties);
             configurationFactory.setPropertySources(propertySources);
-            configurationFactory.setTargetName("keycloak.server");
+            configurationFactory.setTargetName("keycloak");
             configurationFactory.bindPropertiesToTarget();
 
             return kcProperties;

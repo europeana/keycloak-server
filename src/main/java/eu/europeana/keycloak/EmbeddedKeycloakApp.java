@@ -1,7 +1,6 @@
 package eu.europeana.keycloak;
 
 import com.jayway.jsonpath.JsonPath;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,22 +30,19 @@ import java.util.*;
 @PropertySource(value = "classpath:keycloak-user.properties", ignoreResourceNotFound = true)
 public class EmbeddedKeycloakApp {
 
-    @Value("${keycloak.token-path}")
-    private String tokenPath;
-
-    @Value("${keycloak.list-clients-path}")
-    private String listClientsPath;
-
-    @Value("${keycloak.curl-client-id}")
-    private String curlClientId;
-
-    @Value("${keycloak.curl-client-secret}")
-    private String curlClientSecret;
-
-    @Value("${keycloak.list-client-delay}")
-    private Long listClientDelay;
-
     private static final Logger LOG   = LogManager.getLogger(EmbeddedKeycloakApp.class);
+
+    @Value("${keycloak.manager-client.id}")
+    private String managerId;
+
+    @Value("${keycloak.manager-client.secret}")
+    private String managerSecret;
+
+    @Value("${keycloak.warmup.request}")
+    private String warmupRequest;
+
+    @Value("${keycloak.forward.token-service}")
+    private String tokenBasePath;
 
     public static void main(String[] args) {
         SpringApplication.run(EmbeddedKeycloakApp.class, args);
@@ -58,71 +54,65 @@ public class EmbeddedKeycloakApp {
             Integer port = serverProperties.getPort();
             String rootContextPath = serverProperties.getContextPath();
             String keycloakContextPath = StaticPropertyUtil.getContextPath();
-            if (areAutowarmPropertiesSet(tokenPath, listClientsPath, curlClientId, curlClientSecret)){
-                triggerClientLoading("http://localhost:" + port);
+
+            if (areWarmUpPropertiesSet(managerId, managerSecret, warmupRequest)){
+                doWarmup(port);
             } else {
-                LOG.info("Skipping autowarming because not all necessary properties have been set");
+                LOG.info("Skipping warmup because not all necessary properties have been set");
             }
             LOG.info("Embedded Keycloak started: http://localhost:{}{}{} to use keycloak", port, rootContextPath, keycloakContextPath);
         };
     }
 
-    public void triggerClientLoading(String kcBasePath) {
-        TimerTask task = new TimerTask() {
-            public void run() {
+    private void doWarmup(Integer port) {
+        LOG.info("Starting warm-up...");
+        long startTime = System.currentTimeMillis();
+        String host = "http://localhost:" + port;
+        String token = getToken(host + tokenBasePath + "/token", startTime);
 
-                LOG.info("Client list request triggered {} sec after Keycloak started, at {}"
-                        , String.format("%.3f", listClientDelay / 1000f)
-                        , new Date());
-
-                long         t1 = System.currentTimeMillis();
-                RestTemplate tokenTemplate = new RestTemplate();
-                final String tokenUrl      = kcBasePath + tokenPath;
-                HttpHeaders  tokenHeaders  = new HttpHeaders();
-                tokenHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-                MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-                map.add("client_id", curlClientId);
-                map.add("client_secret", curlClientSecret);
-                map.add("grant_type", "client_credentials");
-                HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, tokenHeaders);
-                ResponseEntity<String> tokenResponse = tokenTemplate.postForEntity(
-                        tokenUrl, request , String.class);
-
-                LOG.info("Token for autowarming request retrieved in {} milliseconds with HTTP status {}"
-                        , String.format("%.3f", (System.currentTimeMillis() - t1) / 1000f)
-                        , tokenResponse.getStatusCode());
-
-                if (tokenResponse.getStatusCode() != HttpStatus.OK) {
-                    LOG.error("Could not obtain token to trigger autowarming");
-                } else {
-
-                    String token = JsonPath.read(tokenResponse.getBody(), "access_token");
-                    final String listClientsUrl     = kcBasePath + listClientsPath;
-                    HttpHeaders  listClientHeaders  = new HttpHeaders();
-                    listClientHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-                    listClientHeaders.add("Authorization", "Bearer " + token);
-                    ResponseEntity<String> clientsListresponse = new RestTemplate().exchange(
-                            listClientsUrl, HttpMethod.GET, new HttpEntity<String>(listClientHeaders),
-                            String.class);
-
-                    if (clientsListresponse.getStatusCode() != HttpStatus.OK ) {
-                        LOG.error("The Keycloak listClients request used for autowarming returned HTTP status {} " +
-                                "after {} seconds, indicating that the autowarming after startup has probably failed"
-                                , clientsListresponse.getStatusCode()
-                                , String.format("%.3f", (System.currentTimeMillis() - t1) / 1000f));
-                    } else {
-                        LOG.info("Autowarming completed after {} seconds with HTTP status {}"
-                                , String.format("%.3f", (System.currentTimeMillis() - t1) / 1000f)
-                                , clientsListresponse.getStatusCode());
-                    }
-                }
+        if (StringUtils.isNotEmpty(token)) {
+            HttpHeaders listClientHeaders = new HttpHeaders();
+            listClientHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+            listClientHeaders.add("Authorization", "Bearer " + token);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Warm-up request = {}", host + warmupRequest);
             }
-        };
-        Timer timer = new Timer("ListClientTrigger");
-        timer.schedule(task, listClientDelay);
+            ResponseEntity<String> warmUpResponse = new RestTemplate().exchange(
+                    host + warmupRequest, HttpMethod.GET, new HttpEntity<String>(listClientHeaders), String.class);
+
+            if (warmUpResponse.getStatusCode() != HttpStatus.OK) {
+                LOG.error("Warm-up failed after {} seconds with HTTP status {} ",
+                        (System.currentTimeMillis() - startTime)/1000, warmUpResponse.getStatusCode());
+            } else {
+                LOG.info("Warm-up completed after {} seconds with HTTP status {}",
+                        (System.currentTimeMillis() - startTime)/1000, warmUpResponse.getStatusCode());
+            }
+        }
     }
 
-    private boolean areAutowarmPropertiesSet(String... awProperties){
-        return StringUtils.isNoneBlank(awProperties) && !StringUtils.equalsAnyIgnoreCase("REMOVED", awProperties);
+    private boolean areWarmUpPropertiesSet(String... requiredProperties){
+        return StringUtils.isNoneBlank(requiredProperties) && !StringUtils.equalsAnyIgnoreCase("REMOVED", requiredProperties);
+    }
+
+    private String getToken(String path, long startTime) {
+        RestTemplate tokenTemplate = new RestTemplate();
+        HttpHeaders  tokenHeaders  = new HttpHeaders();
+        tokenHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("client_id", managerId);
+        map.add("client_secret", managerSecret);
+        map.add("grant_type", "client_credentials");
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, tokenHeaders);
+        LOG.debug("Token request = {}", path);
+        ResponseEntity<String> tokenResponse = tokenTemplate.postForEntity(path, request , String.class);
+
+        LOG.info("Access token retrieved in {} ms with HTTP status {}",
+                (System.currentTimeMillis() - startTime), tokenResponse.getStatusCode());
+
+        if (tokenResponse.getStatusCode() != HttpStatus.OK) {
+            LOG.error("Could not obtain access token");
+            return null;
+        }
+        return JsonPath.read(tokenResponse.getBody(), "access_token");
     }
 }

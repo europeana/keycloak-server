@@ -56,7 +56,10 @@ public class EmbeddedKeycloakApp {
             String keycloakContextPath = StaticPropertyUtil.getContextPath();
 
             if (areWarmUpPropertiesSet(managerId, managerSecret, warmupRequest)){
-                doWarmup(port);
+                Runnable warmup = () -> doWarmup(port);
+                // run this as a separate thread so start-up can finish (even in case of errors during warm-up)
+                Thread thread = new Thread(warmup);
+                thread.start();
             } else {
                 LOG.info("Skipping warmup because not all necessary properties have been set");
             }

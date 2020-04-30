@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * Keycloak related configuration
  * @author Thomas Darimont
  */
-@ConfigurationProperties(prefix = "keycloak.server")
+@ConfigurationProperties(prefix = "keycloak")
 public class KeycloakServerProperties {
 
     private String contextPath;
